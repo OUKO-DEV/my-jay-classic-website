@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<htnl lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width,initial-scale=1.0">
+   <title>jay ouko | web developer</title>
+<head>
+<body>
+    <h1>welcome to jay ouko</h1>
+    <h2>web Developer & freelancer</h2>
+  <p>
+   I create a simple, professional websites for business and individuals.
+  </p>
+ <h2>Myservices</h2>
+ <ul>
+     <li>Website design</li>
+     <li>Website Development</li>
+     <li>Landing pages</li>
+     <li>portfolio website</li>
+ </ul>
+ <h2>Contact Me</h2>
+ <p>Email:-emmanuelouko21@gmail.com</p>
+</body>
+</html>
