@@ -1,53 +1,51 @@
 
-/* ==========================================
+/* ==============================================
    EMMANUEL OUKO | TSM REFERRAL WEBSITE
-   JavaScript functionality
-========================================== */
+   Complete JavaScript
+============================================== */
 
 
-/* 1. YOUR WHATSAPP NUMBER */
+/* 1. CONTACT DETAILS */
 
-// Replace this example with your real Kenyan number.
-// Format: 2547XXXXXXXX
-// Use digits only: no + sign, spaces, or leading zero.
-
-const WHATSAPP_NUMBER = "2547XXXXXXXX";
+const WHATSAPP_NUMBER = "254142617814";
+const CONTACT_EMAIL = "emmanuelouko21@gmail.com";
 
 
-/* 2. REFERRAL MESSAGE */
+/* 2. WHATSAPP REFERRAL MESSAGE */
 
 const WHATSAPP_MESSAGE =
     "Hello Emmanuel Ouko! I am interested in learning about Tech Space Masters (TSM). Please explain the official registration process, current membership fees and terms. I would also like guidance on contacting the appropriate TSM leader.";
 
 
-/* 3. SET UP WHATSAPP BUTTONS */
+/* 3. CREATE WHATSAPP LINK */
 
-function setupWhatsAppButtons() {
-    const buttons = [
-        document.getElementById("whatsappButton")
-    ];
+function createWhatsAppLink() {
+    const number = WHATSAPP_NUMBER.replace(/\D/g, "");
 
-    const cleanNumber = WHATSAPP_NUMBER.replace(/\D/g, "");
-
-    const validKenyanNumber = /^254\d{9}$/.test(cleanNumber);
-
-    let whatsappLink;
-
-    if (validKenyanNumber) {
-        whatsappLink =
-            "https://wa.me/" +
-            cleanNumber +
-            "?text=" +
-            encodeURIComponent(WHATSAPP_MESSAGE);
-    } else {
-        // Opens WhatsApp with the message prepared.
-        // The user can then select a contact.
-        whatsappLink =
-            "https://wa.me/?text=" +
+    if (!/^254\d{9}$/.test(number)) {
+        return "https://wa.me/?text=" +
             encodeURIComponent(WHATSAPP_MESSAGE);
     }
 
-    buttons.forEach(function (button) {
+    return "https://wa.me/" +
+        number +
+        "?text=" +
+        encodeURIComponent(WHATSAPP_MESSAGE);
+}
+
+
+/* 4. CONNECT WHATSAPP BUTTONS */
+
+function setupWhatsAppButtons() {
+    const whatsappButtons = [
+        document.getElementById("whatsappButton"),
+        document.getElementById("whatsappTop"),
+        document.getElementById("whatsappBottom")
+    ];
+
+    const whatsappLink = createWhatsAppLink();
+
+    whatsappButtons.forEach(function (button) {
         if (button) {
             button.href = whatsappLink;
             button.target = "_blank";
@@ -57,18 +55,33 @@ function setupWhatsAppButtons() {
 }
 
 
-/* 4. AUTOMATIC COPYRIGHT YEAR */
+/* 5. SET UP EMAIL LINKS */
+
+function setupEmailLinks() {
+    const emailLinks = document.querySelectorAll(
+        'a[href^="mailto:"]'
+    );
+
+    emailLinks.forEach(function (link) {
+        link.href = "mailto:" + CONTACT_EMAIL;
+    });
+}
+
+
+/* 6. AUTOMATIC COPYRIGHT YEAR */
 
 function updateCopyrightYear() {
-    const yearElement = document.getElementById("currentYear");
+    const yearElement =
+        document.getElementById("currentYear");
 
     if (yearElement) {
-        yearElement.textContent = new Date().getFullYear();
+        yearElement.textContent =
+            new Date().getFullYear();
     }
 }
 
 
-/* 5. SMOOTH SECTION NAVIGATION */
+/* 7. SMOOTH NAVIGATION */
 
 function setupNavigation() {
     const navigationLinks = document.querySelectorAll(
@@ -77,9 +90,11 @@ function setupNavigation() {
 
     navigationLinks.forEach(function (link) {
         link.addEventListener("click", function (event) {
-            const targetId = link.getAttribute("href");
+            const targetId =
+                link.getAttribute("href");
 
-            const targetSection = document.querySelector(targetId);
+            const targetSection =
+                document.querySelector(targetId);
 
             if (targetSection) {
                 event.preventDefault();
@@ -89,23 +104,36 @@ function setupNavigation() {
                     block: "start"
                 });
 
-                history.replaceState(null, "", targetId);
+                history.replaceState(
+                    null,
+                    "",
+                    targetId
+                );
             }
         });
     });
 }
 
 
-/* 6. REVEAL SECTIONS AS YOU SCROLL */
+/* 8. SCROLL REVEAL ANIMATIONS */
 
 function setupScrollAnimations() {
-    const cards = document.querySelectorAll(
-        ".feature-card, .step-card, .contact-box"
-    );
+    const animatedElements =
+        document.querySelectorAll(
+            ".feature-card, .step-card, .contact-box"
+        );
 
-    // Keep the content visible if the browser
-    // does not support IntersectionObserver.
+    // If unsupported, leave everything visible.
     if (!("IntersectionObserver" in window)) {
+        return;
+    }
+
+    // Respect visitors who prefer reduced motion.
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) {
         return;
     }
 
@@ -114,6 +142,7 @@ function setupScrollAnimations() {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
                     entry.target.classList.add("is-visible");
+
                     currentObserver.unobserve(entry.target);
                 }
             });
@@ -123,20 +152,43 @@ function setupScrollAnimations() {
         }
     );
 
-    cards.forEach(function (card) {
-        card.classList.add("reveal-on-scroll");
-        observer.observe(card);
+    animatedElements.forEach(function (element) {
+        element.classList.add("reveal-on-scroll");
+        observer.observe(element);
     });
 }
 
 
-/* 7. RUN EVERYTHING AFTER THE PAGE LOADS */
+/* 9. PREVENT EMPTY INTERNAL LINKS */
 
-document.addEventListener("DOMContentLoaded", function () {
-    setupWhatsAppButtons();
-    updateCopyrightYear();
-    setupNavigation();
-    setupScrollAnimations();
+function setupSafeLinks() {
+    const links = document.querySelectorAll('a[href="#"]');
 
-    console.log("Emmanuel Ouko's TSM referral website is ready.");
-});
+    links.forEach(function (link) {
+        // The WhatsApp button is assigned a real URL above.
+        if (link.id !== "whatsappButton") {
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+            });
+        }
+    });
+}
+
+
+/* 10. INITIALIZE WEBSITE */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        setupWhatsAppButtons();
+        setupEmailLinks();
+        updateCopyrightYear();
+        setupNavigation();
+        setupScrollAnimations();
+        setupSafeLinks();
+
+        console.log(
+            "Emmanuel Ouko's TSM referral website is ready."
+        );
+    }
+);
