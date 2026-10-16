@@ -5,313 +5,503 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta name="description" content="Connect with Emmanuel Ouko for TSM Technology registration information, digital opportunities, and Forex education referrals.">
     <meta name="theme-color" content="#07111f">
-    <meta name="description"
-          content="Learn about Tech Space Masters with Emmanuel Ouko.">
 
     <title>Emmanuel Ouko | TSM Referral Hub</title>
 
-    <!-- Website design -->
-    <link rel="stylesheet" href="style.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Icons -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Your stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- Navigation -->
+    <!-- Background decoration -->
+    <div class="background-effects" aria-hidden="true">
+        <div class="glow glow-one"></div>
+        <div class="glow glow-two"></div>
+    </div>
+
+    <!-- Header and navigation -->
     <header class="header">
-        <a href="#home" class="logo">
+        <a href="#home" class="logo" aria-label="Emmanuel Ouko home">
             <span class="logo-icon">EO</span>
             <span>EMMANUEL <span class="highlight">OUKO</span></span>
         </a>
 
-        <nav class="navbar">
+        <nav class="navbar" id="mainNavbar" aria-label="Main navigation">
             <a href="#home">Home</a>
             <a href="#about">About TSM</a>
+            <a href="#forex">Forex Trading</a>
             <a href="#join">How to Join</a>
             <a href="#contact">Contact</a>
         </nav>
 
-        <a href="#join" class="nav-button">Get Started</a>
+        <a href="#join" class="nav-button">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+
+        <button
+            class="menu-toggle"
+            id="menuToggle"
+            type="button"
+            aria-label="Open navigation menu"
+            aria-controls="mainNavbar"
+            aria-expanded="false">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        </button>
     </header>
 
-    <!-- Hero section -->
     <main>
-        <section class="hero" id="home">
 
+        <!-- Hero section -->
+        <section class="hero section" id="home">
             <div class="hero-content">
-                <span class="eyebrow">
-                    <i class="fa-solid fa-circle-check"></i>
-                    TSM MEMBER REFERRAL HUB
-                </span>
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    DIGITAL OPPORTUNITIES & LEARNING
+                </div>
+
+                <p class="eyebrow">WELCOME TO MY DIGITAL HUB</p>
 
                 <h1>
-                    Discover digital opportunities
-                    with <span class="highlight">TSM.</span>
+                    Learn. Connect.
+                    <span class="gradient-text">Explore Opportunities.</span>
                 </h1>
 
-                <p>
-                    Welcome! I'm Emmanuel Ouko, a Tech Space Masters
-                    member. Explore the official TSM information,
-                    ask questions and learn how to register if you
-                    decide the platform is right for you.
+                <p class="hero-description">
+                    Hello, I'm <strong>Emmanuel Ouko</strong>. This is my
+                    referral hub for people interested in learning about
+                    TSM Technology, understanding the registration process,
+                    and exploring Forex education resources.
                 </p>
 
-                <div class="hero-buttons">
-                    <a href="https://techspacemasters.com/register/?lid=2"
-                       class="btn btn-primary"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                        Register with TSM
+                <div class="hero-actions">
+                    <a
+                        href="https://techspacemasters.com/register/?lid=2"
+                        class="btn btn-primary"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Explore TSM Registration
                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                     </a>
 
-                    <a href="#contact" class="btn btn-outline">
+                    <a href="#contact" class="btn btn-secondary">
                         Contact Me
+                        <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
 
-                <div class="hero-note">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    Review the official terms before registering or paying.
+                <div class="hero-highlights">
+                    <div class="highlight-item">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>Learning</span>
+                    </div>
+
+                    <div class="highlight-item">
+                        <i class="fa-solid fa-people-group"></i>
+                        <span>Connections</span>
+                    </div>
+
+                    <div class="highlight-item">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Market Education</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Member profile -->
-            <div class="profile-card">
-                <div class="profile-top">
-                    <div class="profile-avatar">EO</div>
+            <div class="hero-visual" aria-label="Digital technology illustration">
+                <div class="orbit orbit-one"></div>
+                <div class="orbit orbit-two"></div>
 
-                    <div>
-                        <h2>Emmanuel Ouko</h2>
-                        <p>@Emmanuelouko</p>
+                <div class="hero-card">
+                    <div class="hero-card-top">
+                        <span class="hero-card-icon">
+                            <i class="fa-solid fa-microchip"></i>
+                        </span>
+                        <span class="card-status">DIGITAL HUB</span>
+                    </div>
+
+                    <div class="hero-monogram">EO</div>
+
+                    <h2>Emmanuel Ouko</h2>
+                    <p>TSM Referral Hub</p>
+
+                    <div class="hero-card-line"></div>
+
+                    <div class="hero-card-footer">
+                        <span><i class="fa-solid fa-link"></i> Connect</span>
+                        <span><i class="fa-solid fa-book-open"></i> Learn</span>
                     </div>
                 </div>
 
-                <div class="status">
-                    <span class="status-dot"></span>
-                    Member status: Active
+                <div class="floating-icon floating-icon-one">
+                    <i class="fa-solid fa-code"></i>
                 </div>
 
-                <div class="profile-details">
-                    <div class="detail-row">
-                        <span>Email</span>
-                        <strong>emmanuelouko21@gmail.com</strong>
-                    </div>
-
-                    <div class="detail-row">
-                        <span>Platform</span>
-                        <strong>Tech Space Masters</strong>
-                    </div>
-
-                    <div class="detail-row">
-                        <span>Website</span>
-                        <strong>Emmanuelouko.tsm.ke</strong>
-                    </div>
+                <div class="floating-icon floating-icon-two">
+                    <i class="fa-solid fa-chart-simple"></i>
                 </div>
 
-                <a href="mailto:emmanuelouko21@gmail.com"
-                   class="profile-contact">
-                    <i class="fa-solid fa-envelope"></i>
-                    Send me an email
-                </a>
+                <div class="floating-icon floating-icon-three">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
             </div>
-
         </section>
 
-        <!-- About section -->
-        <section class="section" id="about">
+        <!-- About Emmanuel -->
+        <section class="section about-section" id="about">
             <div class="section-heading">
-                <span class="section-label">ABOUT THE PLATFORM</span>
-                <h2>Learn before you join</h2>
+                <span class="section-label">ABOUT THIS HUB</span>
+                <h2>A place to <span class="gradient-text">connect and learn</span></h2>
                 <p>
-                    Find official information, understand the requirements
-                    and make an informed decision.
+                    Clear information, direct communication and links to
+                    resources that help you make informed decisions.
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <article class="about-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <h3>Meet Emmanuel Ouko</h3>
+                    <p>
+                        I use this website to share referral links and help
+                        interested people find the relevant registration
+                        and contact information.
+                    </p>
+                </article>
+
+                <article class="about-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-laptop-code"></i>
+                    </div>
+                    <h3>Technology & Learning</h3>
+                    <p>
+                        Explore the information provided through TSM's
+                        official channels and review the terms before
+                        deciding whether to participate.
+                    </p>
+                </article>
+
+                <article class="about-card">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <h3>Direct Communication</h3>
+                    <p>
+                        Contact me with your questions. For Forex-related
+                        learning enquiries, you can also contact Dan
+                        through the dedicated section below.
+                    </p>
+                </article>
+            </div>
+
+            <div class="information-panel">
+                <div class="information-icon">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <div>
+                    <h3>Make informed decisions</h3>
+                    <p>
+                        Please verify company information, registration
+                        requirements, fees and any services directly with
+                        the relevant official provider before making a
+                        payment or sharing personal information.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Forex section -->
+        <section class="section forex-section" id="forex">
+            <div class="section-heading">
+                <span class="section-label">FOREX EDUCATION</span>
+                <h2>Explore the <span class="gradient-text">Forex Market</span></h2>
+                <p>
+                    Learn about currency markets, trading fundamentals
+                    and risk management before making financial decisions.
                 </p>
             </div>
 
             <div class="feature-grid">
-
                 <article class="feature-card">
                     <div class="feature-icon">
-                        <i class="fa-solid fa-laptop-code"></i>
+                        <i class="fa-solid fa-chart-line"></i>
                     </div>
-
-                    <h3>Explore TSM</h3>
-
+                    <h3>Understand Forex</h3>
                     <p>
-                        Visit the official website to learn about the
-                        platform, its services and membership terms.
+                        Learn what currency pairs are, how exchange rates
+                        move, and what spreads and market volatility mean.
                     </p>
-
-                    <a href="https://techspacemasters.com/"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                        Visit official website
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
                 </article>
 
                 <article class="feature-card">
                     <div class="feature-icon">
-                        <i class="fa-solid fa-user-plus"></i>
+                        <i class="fa-solid fa-graduation-cap"></i>
                     </div>
-
-                    <h3>Registration guidance</h3>
-
+                    <h3>Learn Before Trading</h3>
                     <p>
-                        If you decide to register, check the inviter
-                        field and enter Emmanuelouko if you intend
-                        to use my referral.
+                        Study trading terminology, practise with a demo
+                        account where available, and understand risk
+                        management before risking real money.
                     </p>
-
-                    <a href="https://techspacemasters.com/register/?lid=2"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                        Open registration
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
                 </article>
 
-                <article class="feature-card">
+                <article class="feature-card dan-card">
                     <div class="feature-icon">
-                        <i class="fa-solid fa-comments"></i>
+                        <i class="fa-solid fa-user-tie"></i>
                     </div>
-
-                    <h3>Ask questions</h3>
-
+                    <h3>Connect with Dan</h3>
                     <p>
-                        Contact me to discuss the registration process
-                        and request an introduction to the appropriate
-                        TSM leader.
+                        Have questions about Forex learning? Contact Dan
+                        directly on WhatsApp to ask about the information
+                        and learning opportunities he offers.
                     </p>
 
-                    <a href="#contact">
-                        Contact Emmanuel
-                        <i class="fa-solid fa-arrow-right"></i>
+                    <a
+                        href="https://wa.me/254707746452?text=Hello%20Dan%2C%20I%20was%20referred%20by%20Emmanuel%20Ouko.%20I%27d%20like%20to%20learn%20more%20about%20Forex%20trading."
+                        class="btn btn-whatsapp"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        Contact Dan on WhatsApp
                     </a>
                 </article>
+            </div>
 
+            <div class="disclaimer forex-disclaimer">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                    <strong>Important trading risk notice</strong>
+                    <p>
+                        Forex trading involves substantial risk and you may
+                        lose some or all of your invested capital. Educational
+                        information is not financial advice. No profits or
+                        returns are guaranteed. Independently verify any
+                        broker, fees, services and regulatory status before
+                        depositing money.
+                    </p>
+                </div>
             </div>
         </section>
 
-        <!-- Joining steps -->
+        <!-- How to join -->
         <section class="section join-section" id="join">
             <div class="section-heading">
                 <span class="section-label">GETTING STARTED</span>
-                <h2>Your next steps</h2>
-                <p>Take your time and verify the details.</p>
+                <h2>How to <span class="gradient-text">Get Started</span></h2>
+                <p>
+                    Follow these steps to review the available information
+                    and decide what works for you.
+                </p>
             </div>
 
             <div class="steps-grid">
                 <article class="step-card">
                     <span class="step-number">01</span>
-                    <h3>Contact me</h3>
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <h3>Visit the TSM Website</h3>
                     <p>
-                        Ask about TSM and the official information
-                        you need before joining.
+                        Open the registration page using the referral link
+                        provided on this website.
                     </p>
                 </article>
 
                 <article class="step-card">
                     <span class="step-number">02</span>
-                    <h3>Review the terms</h3>
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h3>Review the Details</h3>
                     <p>
-                        Confirm the current membership fee, requirements,
-                        policies and payment instructions on the official
-                        platform.
+                        Read the requirements, terms, privacy information
+                        and any applicable fees on the official website.
                     </p>
                 </article>
 
                 <article class="step-card">
                     <span class="step-number">03</span>
-                    <h3>Register if ready</h3>
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                    <h3>Make Your Decision</h3>
                     <p>
-                        Use the official registration page and verify
-                        your inviter details before submitting.
+                        Proceed only if you understand the terms and are
+                        comfortable with the information provided.
                     </p>
                 </article>
+            </div>
+
+            <div class="join-cta">
+                <div>
+                    <span class="section-label">TSM REGISTRATION</span>
+                    <h3>Ready to review the official details?</h3>
+                    <p>
+                        Use the referral link to visit the TSM registration page.
+                    </p>
+                </div>
+
+                <a
+                    href="https://techspacemasters.com/register/?lid=2"
+                    class="btn btn-primary"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    Visit Registration Page
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
             </div>
         </section>
 
         <!-- Contact section -->
-        <section class="section" id="contact">
-            <div class="contact-box">
-                <div class="contact-content">
-                    <span class="section-label">LET'S CONNECT</span>
-                    <h2>Have questions about TSM?</h2>
-
-                    <p>
-                        Send me a message or email. I can help you find
-                        the official information and request guidance
-                        from the appropriate TSM leader.
-                    </p>
-
-                    <div class="contact-buttons">
-                        <a href="#" id="whatsappButton"
-                           class="btn btn-whatsapp">
-                            <i class="fa-brands fa-whatsapp"></i>
-                            Chat on WhatsApp
-                        </a>
-
-                        <a href="mailto:emmanuelouko21@gmail.com"
-                           class="btn btn-primary">
-                            <i class="fa-solid fa-envelope"></i>
-                            Email Me
-                        </a>
-                    </div>
-                </div>
-
-                <div class="contact-details">
-                    <p>
-                        <i class="fa-solid fa-envelope"></i>
-                        <a href="mailto:emmanuelouko21@gmail.com">
-                            emmanuelouko21@gmail.com
-                        </a>
-                    </p>
-
-                    <p>
-                        <i class="fa-solid fa-user"></i>
-                        TSM username: Emmanuelouko
-                    </p>
-
-                    <p>
-                        <i class="fa-solid fa-globe"></i>
-                        <a href="https://techspacemasters.com/"
-                           target="_blank"
-                           rel="noopener noreferrer">
-                            Official TSM website
-                        </a>
-                    </p>
-                </div>
+        <section class="section contact-section" id="contact">
+            <div class="section-heading">
+                <span class="section-label">LET'S CONNECT</span>
+                <h2>Have a <span class="gradient-text">question?</span></h2>
+                <p>
+                    Reach out for enquiries about this referral hub,
+                    registration links or the information shared here.
+                </p>
             </div>
 
-            <div class="disclaimer">
-                <strong>Important information:</strong>
-                This is a personal referral page, not an official TSM
-                website and not connected to your live account. Fees,
-                membership requirements and policies may change.
-                Confirm them directly with TSM. Do not promise earnings
-                or send registration money to a personal M-Pesa number
-                unless official TSM instructions explicitly authorize it.
+            <div class="contact-grid">
+
+                <!-- Email contact -->
+                <article class="contact-card">
+                    <div class="contact-icon email-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+
+                    <h3>Email Me</h3>
+                    <p>
+                        Send an email with your question or enquiry.
+                    </p>
+
+                    <a
+                        href="mailto:emmanuelouko21@gmail.com?subject=TSM%20Referral%20Enquiry"
+                        class="contact-link">
+                        emmanuelouko21@gmail.com
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </article>
+
+                <!-- WhatsApp contact -->
+                <article class="contact-card">
+                    <div class="contact-icon whatsapp-icon">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+
+                    <h3>WhatsApp</h3>
+                    <p>
+                        Start a WhatsApp conversation to ask a question.
+                    </p>
+
+                    <a
+                        href="#"
+                        id="whatsappButton"
+                        class="contact-link"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Chat on WhatsApp
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+
+                    <p class="small-note">
+                        This button uses the WhatsApp number configured
+                        in your app.js file.
+                    </p>
+                </article>
+
+                <!-- Official links -->
+                <article class="contact-card">
+                    <div class="contact-icon website-icon">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+
+                    <h3>Official TSM Website</h3>
+                    <p>
+                        Visit the website to review official information
+                        and available registration details.
+                    </p>
+
+                    <a
+                        href="https://techspacemasters.com/register/?lid=2"
+                        class="contact-link"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        Visit TSM
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </article>
+
+            </div>
+
+            <div class="contact-note">
+                <i class="fa-solid fa-shield-halved"></i>
+                <p>
+                    Protect your personal information. Never share your
+                    passwords, verification codes or sensitive account
+                    details with anyone.
+                </p>
             </div>
         </section>
+
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <p>
-            &copy; <span id="currentYear"></span>
-            Emmanuel Ouko. All rights reserved.
-        </p>
+        <div class="footer-main">
+            <a href="#home" class="logo footer-logo">
+                <span class="logo-icon">EO</span>
+                <span>EMMANUEL <span class="highlight">OUKO</span></span>
+            </a>
 
-        <p>Personal TSM referral information page.</p>
+            <p>
+                Connecting people with information, learning resources
+                and referral links.
+            </p>
+
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#forex">Forex Education</a>
+                <a href="#join">How to Join</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+
+        <div class="footer-disclaimer">
+            <strong>Disclaimer:</strong>
+            This website is a personal referral and information hub.
+            It does not represent an official TSM Technology website
+            unless expressly authorized. Company information, services,
+            fees and registration terms should be verified through
+            official channels. Forex trading carries financial risk.
+            No income, returns or trading profits are promised.
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                &copy; <span id="currentYear">2026</span>
+                Emmanuel Ouko. All rights reserved.
+            </p>
+
+            <a href="#home" class="back-to-top" aria-label="Back to top">
+                <i class="fa-solid fa-arrow-up"></i>
+            </a>
+        </div>
     </footer>
 
-    <!-- Website functionality -->
+    <!-- Your JavaScript -->
     <script src="app.js"></script>
 
 </body>
