@@ -1,8 +1,8 @@
 
-/* ==============================================
-   EMMANUEL OUKO | TSM REFERRAL WEBSITE
-   Complete JavaScript
-============================================== */
+/* =====================================================
+   EMMANUEL OUKO | TSM REFERRAL HUB
+   Navigation, WhatsApp, Email and Animations
+===================================================== */
 
 
 /* 1. CONTACT DETAILS */
@@ -22,7 +22,13 @@ const WHATSAPP_MESSAGE =
 function createWhatsAppLink() {
     const number = WHATSAPP_NUMBER.replace(/\D/g, "");
 
+    // Kenya international mobile format: 254 followed by 9 digits.
     if (!/^254\d{9}$/.test(number)) {
+        console.warn(
+            "Please check WHATSAPP_NUMBER in app.js. " +
+            "Use country code 254 followed by 9 digits."
+        );
+
         return "https://wa.me/?text=" +
             encodeURIComponent(WHATSAPP_MESSAGE);
     }
@@ -37,20 +43,22 @@ function createWhatsAppLink() {
 /* 4. CONNECT WHATSAPP BUTTONS */
 
 function setupWhatsAppButtons() {
-    const whatsappButtons = [
-        document.getElementById("whatsappButton"),
-        document.getElementById("whatsappTop"),
-        document.getElementById("whatsappBottom")
+    const buttonIds = [
+        "whatsappButton",
+        "whatsappTop",
+        "whatsappBottom"
     ];
 
     const whatsappLink = createWhatsAppLink();
 
-    whatsappButtons.forEach(function (button) {
-        if (button) {
-            button.href = whatsappLink;
-            button.target = "_blank";
-            button.rel = "noopener noreferrer";
-        }
+    buttonIds.forEach(function (id) {
+        const button = document.getElementById(id);
+
+        if (!button) return;
+
+        button.href = whatsappLink;
+        button.target = "_blank";
+        button.rel = "noopener noreferrer";
     });
 }
 
@@ -63,7 +71,17 @@ function setupEmailLinks() {
     );
 
     emailLinks.forEach(function (link) {
-        link.href = "mailto:" + CONTACT_EMAIL;
+        const existingHref = link.getAttribute("href") || "";
+
+        // Preserve an existing email subject or other query parameters.
+        const queryIndex = existingHref.indexOf("?");
+
+        const emailOptions = queryIndex !== -1
+            ? existingHref.slice(queryIndex)
+            : "";
+
+        link.href =
+            "mailto:" + CONTACT_EMAIL + emailOptions;
     });
 }
 
@@ -81,59 +99,157 @@ function updateCopyrightYear() {
 }
 
 
-/* 7. SMOOTH NAVIGATION */
+/* 7. MOBILE NAVIGATION MENU */
+
+function setupMobileMenu() {
+    const menuToggle =
+        document.getElementById("menuToggle");
+
+    const navbar =
+        document.getElementById("mainNavbar");
+
+    if (!menuToggle || !navbar) return;
+
+    const menuIcon = menuToggle.querySelector("i");
+
+    function setMenuState(isOpen) {
+        navbar.classList.toggle("active", isOpen);
+
+        menuToggle.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+        );
+
+        menuToggle.setAttribute(
+            "aria-label",
+            isOpen
+                ? "Close navigation menu"
+                : "Open navigation menu"
+        );
+
+        if (menuIcon) {
+            menuIcon.classList.toggle(
+                "fa-bars",
+                !isOpen
+            );
+
+            menuIcon.classList.toggle(
+                "fa-xmark",
+                isOpen
+            );
+        }
+    }
+
+    menuToggle.addEventListener("click", function () {
+        const isOpen =
+            menuToggle.getAttribute("aria-expanded") === "true";
+
+        setMenuState(!isOpen);
+    });
+
+    // Close the menu after a navigation link is selected.
+    navbar.querySelectorAll('a[href^="#"]').forEach(function (link) {
+        link.addEventListener("click", function () {
+            setMenuState(false);
+        });
+    });
+
+    // Close with Escape.
+    document.addEventListener("keydown", function (event) {
+        if (
+            event.key === "Escape" &&
+            menuToggle.getAttribute("aria-expanded") === "true"
+        ) {
+            setMenuState(false);
+            menuToggle.focus();
+        }
+    });
+
+    // Close when clicking outside the navigation.
+    document.addEventListener("click", function (event) {
+        const clickedInsideMenu =
+            navbar.contains(event.target) ||
+            menuToggle.contains(event.target);
+
+        if (!clickedInsideMenu) {
+            setMenuState(false);
+        }
+    });
+
+    // If the screen becomes desktop-sized, reset the mobile menu.
+    window.addEventListener("resize", function () {
+        if (window.innerWidth > 800) {
+            setMenuState(false);
+        }
+    });
+
+    // Start with the mobile menu closed.
+    setMenuState(false);
+}
+
+
+/* 8. SMOOTH NAVIGATION */
 
 function setupNavigation() {
     const navigationLinks = document.querySelectorAll(
-        '.navbar a[href^="#"], .logo[href^="#"]'
+        '.navbar a[href^="#"], .logo[href^="#"], ' +
+        '.nav-button[href^="#"], .footer-links a[href^="#"], ' +
+        '.back-to-top[href^="#"], .hero-actions a[href^="#"]'
     );
+
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
 
     navigationLinks.forEach(function (link) {
         link.addEventListener("click", function (event) {
-            const targetId =
-                link.getAttribute("href");
+            const targetId = link.getAttribute("href");
 
-            const targetSection =
-                document.querySelector(targetId);
+            if (!targetId || targetId === "#") return;
 
-            if (targetSection) {
-                event.preventDefault();
+            let targetSection;
 
-                targetSection.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
+            try {
+                targetSection = document.querySelector(targetId);
+            } catch (error) {
+                return;
+            }
 
-                history.replaceState(
-                    null,
-                    "",
-                    targetId
-                );
+            if (!targetSection) return;
+
+            event.preventDefault();
+
+            targetSection.scrollIntoView({
+                behavior: reduceMotion ? "auto" : "smooth",
+                block: "start"
+            });
+
+            // Update the URL hash without adding a new history entry.
+            if (window.location.hash !== targetId) {
+                history.replaceState(null, "", targetId);
             }
         });
     });
 }
 
 
-/* 8. SCROLL REVEAL ANIMATIONS */
+/* 9. SCROLL REVEAL ANIMATIONS */
 
 function setupScrollAnimations() {
-    const animatedElements =
-        document.querySelectorAll(
-            ".feature-card, .step-card, .contact-box"
-        );
+    const animatedElements = document.querySelectorAll(
+        ".about-card, .feature-card, .step-card, " +
+        ".contact-card, .information-panel, " +
+        ".join-cta, .contact-note"
+    );
 
-    // If unsupported, leave everything visible.
-    if (!("IntersectionObserver" in window)) {
-        return;
-    }
-
-    // Respect visitors who prefer reduced motion.
     const reduceMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    if (reduceMotion) {
+    if (
+        reduceMotion ||
+        !("IntersectionObserver" in window)
+    ) {
         return;
     }
 
@@ -141,54 +257,55 @@ function setupScrollAnimations() {
         function (entries, currentObserver) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add("is-visible");
-
+                    entry.target.classList.add("visible");
                     currentObserver.unobserve(entry.target);
                 }
             });
         },
         {
-            threshold: 0.12
+            threshold: 0.12,
+            rootMargin: "0px 0px -25px 0px"
         }
     );
 
-    animatedElements.forEach(function (element) {
-        element.classList.add("reveal-on-scroll");
+    animatedElements.forEach(function (element, index) {
+        element.classList.add("reveal");
+
+        // A small staggered delay creates a polished effect.
+        element.style.transitionDelay =
+            (index % 3) * 90 + "ms";
+
         observer.observe(element);
     });
 }
 
 
-/* 9. PREVENT EMPTY INTERNAL LINKS */
+/* 10. PREVENT EMPTY INTERNAL LINKS */
 
 function setupSafeLinks() {
-    const links = document.querySelectorAll('a[href="#"]');
+    document.querySelectorAll('a[href="#"]').forEach(function (link) {
+        // WhatsApp buttons receive a URL in setupWhatsAppButtons().
+        if (link.id === "whatsappButton") return;
 
-    links.forEach(function (link) {
-        // The WhatsApp button is assigned a real URL above.
-        if (link.id !== "whatsappButton") {
-            link.addEventListener("click", function (event) {
-                event.preventDefault();
-            });
-        }
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+        });
     });
 }
 
 
-/* 10. INITIALIZE WEBSITE */
+/* 11. INITIALIZE WEBSITE */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-        setupWhatsAppButtons();
-        setupEmailLinks();
-        updateCopyrightYear();
-        setupNavigation();
-        setupScrollAnimations();
-        setupSafeLinks();
+document.addEventListener("DOMContentLoaded", function () {
+    setupWhatsAppButtons();
+    setupEmailLinks();
+    updateCopyrightYear();
+    setupMobileMenu();
+    setupNavigation();
+    setupScrollAnimations();
+    setupSafeLinks();
 
-        console.log(
-            "Emmanuel Ouko's TSM referral website is ready."
-        );
-    }
-);
+    console.log(
+        "Emmanuel Ouko's TSM Referral Hub is ready."
+    );
+});
