@@ -1,246 +1,415 @@
 
-/* =====================================================
-   EMMANUEL OUKO | TSM REFERRAL HUB
-   Navigation, WhatsApp, Email and Animations
-===================================================== */
+/* =========================================================
+   EMMANUEL OUKO | DIGITAL SERVICES WEBSITE
+   Professional website interactions and contact handling
+   ========================================================= */
+
+"use strict";
+
+/* -------------------- CONFIGURATION -------------------- */
+
+const SITE_CONFIG = {
+    name: "Emmanuel Ouko",
+    email: "emmanuelouko21@gmail.com",
+
+    // Kenyan number: 0142617814
+    // International WhatsApp format: 254142617814
+    whatsapp: "254142617814",
+
+    tsmRegistrationUrl: "https://techspacemasters.com/register/?lid=2"
+};
 
 
-/* 1. CONTACT DETAILS */
+/* -------------------- HELPER FUNCTIONS -------------------- */
 
-const WHATSAPP_NUMBER = "254142617814";
-const CONTACT_EMAIL = "emmanuelouko21@gmail.com";
+const $ = (selector, parent = document) =>
+    parent.querySelector(selector);
 
+const $$ = (selector, parent = document) =>
+    Array.from(parent.querySelectorAll(selector));
 
-/* 2. WHATSAPP REFERRAL MESSAGE */
+function cleanPhoneNumber(number) {
+    return String(number || "").replace(/\D/g, "");
+}
 
-const WHATSAPP_MESSAGE =
-    "Hello Emmanuel Ouko! I am interested in learning about Tech Space Masters (TSM). Please explain the official registration process, current membership fees and terms. I would also like guidance on contacting the appropriate TSM leader.";
+function getWhatsAppUrl(message) {
+    const number = cleanPhoneNumber(SITE_CONFIG.whatsapp);
 
-
-/* 3. CREATE WHATSAPP LINK */
-
-function createWhatsAppLink() {
-    const number = WHATSAPP_NUMBER.replace(/\D/g, "");
-
-    // Kenya international mobile format: 254 followed by 9 digits.
     if (!/^254\d{9}$/.test(number)) {
-        console.warn(
-            "Please check WHATSAPP_NUMBER in app.js. " +
-            "Use country code 254 followed by 9 digits."
+        console.error(
+            "WhatsApp number is not in the expected Kenyan international format."
         );
-
-        return "https://wa.me/?text=" +
-            encodeURIComponent(WHATSAPP_MESSAGE);
+        return null;
     }
 
-    return "https://wa.me/" +
-        number +
-        "?text=" +
-        encodeURIComponent(WHATSAPP_MESSAGE);
+    return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+}
+
+function openWhatsApp(message) {
+    const url = getWhatsAppUrl(message);
+
+    if (url) {
+        window.open(url, "_blank", "noopener,noreferrer");
+    }
+}
+
+function openEmail(subject, message) {
+    const url =
+        `mailto:${SITE_CONFIG.email}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(message)}`;
+
+    window.location.href = url;
 }
 
 
-/* 4. CONNECT WHATSAPP BUTTONS */
+/* -------------------- MOBILE NAVIGATION -------------------- */
 
-function setupWhatsAppButtons() {
+function initMobileNavigation() {
+    const menuToggle = $("#menuToggle");
+    const navbar = $("#mainNavbar");
+
+    if (!menuToggle || !navbar) return;
+
+    function setMenuState(isOpen) {
+        navbar.classList.toggle("active", isOpen);
+        menuToggle.classList.toggle("active", isOpen);
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+        menuToggle.setAttribute(
+            "aria-label",
+            isOpen ? "Close navigation menu" : "Open navigation menu"
+        );
+
+        const icon = $("i", menuToggle);
+
+        if (icon) {
+            icon.classList.toggle("fa-bars", !isOpen);
+            icon.classList.toggle("fa-xmark", isOpen);
+        }
+    }
+
+    menuToggle.setAttribute("aria-controls", "mainNavbar");
+    menuToggle.setAttribute("aria-expanded", "false");
+
+    menuToggle.addEventListener("click", () => {
+        const isOpen = navbar.classList.contains("active");
+        setMenuState(!isOpen);
+    });
+
+    $$("#mainNavbar a").forEach(link => {
+        link.addEventListener("click", () => setMenuState(false));
+    });
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            setMenuState(false);
+        }
+    });
+
+    document.addEventListener("click", event => {
+        if (
+            navbar.classList.contains("active") &&
+            !navbar.contains(event.target) &&
+            !menuToggle.contains(event.target)
+        ) {
+            setMenuState(false);
+        }
+    });
+
+    window.addEventListener("resize", () => {
+        if (window.innerWidth > 980) {
+            setMenuState(false);
+        }
+    });
+}
+
+
+/* -------------------- WHATSAPP CONTACT BUTTONS -------------------- */
+
+function initWhatsAppButtons() {
+    const defaultMessage =
+        `Hello ${SITE_CONFIG.name}! I visited your website and would like ` +
+        "to learn more about your digital services and opportunities. " +
+        "Please share the relevant details with me.";
+
     const buttonIds = [
         "whatsappButton",
         "whatsappTop",
         "whatsappBottom"
     ];
 
-    const whatsappLink = createWhatsAppLink();
-
-    buttonIds.forEach(function (id) {
+    buttonIds.forEach(id => {
         const button = document.getElementById(id);
 
         if (!button) return;
 
-        button.href = whatsappLink;
-        button.target = "_blank";
-        button.rel = "noopener noreferrer";
+        const url = getWhatsAppUrl(defaultMessage);
+
+        if (url) {
+            button.setAttribute("href", url);
+            button.setAttribute("target", "_blank");
+            button.setAttribute("rel", "noopener noreferrer");
+        }
+    });
+
+    // Support other WhatsApp links that explicitly use a data attribute.
+    $$("[data-whatsapp]").forEach(button => {
+        const message =
+            button.dataset.message || defaultMessage;
+
+        const url = getWhatsAppUrl(message);
+
+        if (url && button.tagName.toLowerCase() === "a") {
+            button.href = url;
+            button.target = "_blank";
+            button.rel = "noopener noreferrer";
+        } else if (url) {
+            button.addEventListener("click", () => openWhatsApp(message));
+        }
     });
 }
 
 
-/* 5. SET UP EMAIL LINKS */
+/* -------------------- INTEREST / ENQUIRY FORM -------------------- */
 
-function setupEmailLinks() {
-    const emailLinks = document.querySelectorAll(
-        'a[href^="mailto:"]'
-    );
+function initInterestForm() {
+    const form =
+        $("#interestForm") ||
+        $(".interest-form");
 
-    emailLinks.forEach(function (link) {
-        const existingHref = link.getAttribute("href") || "";
+    if (!form) {
+        console.info(
+            "Interest form not found. Add id=\"interestForm\" " +
+            "or class=\"interest-form\" to your form in index.html."
+        );
+        return;
+    }
 
-        // Preserve an existing email subject or other query parameters.
-        const queryIndex = existingHref.indexOf("?");
+    const whatsappButton =
+        $("#whatsappFormButton") ||
+        $("#sendWhatsApp") ||
+        $('[data-submit="whatsapp"]', form) ||
+        $('[data-contact="whatsapp"]', form);
 
-        const emailOptions = queryIndex !== -1
-            ? existingHref.slice(queryIndex)
+    const emailButton =
+        $("#emailFormButton") ||
+        $("#sendEmail") ||
+        $('[data-submit="email"]', form) ||
+        $('[data-contact="email"]', form);
+
+    function getFieldValue(names) {
+        for (const name of names) {
+            const field = form.elements.namedItem(name);
+
+            if (!field) continue;
+
+            if (field instanceof RadioNodeList) {
+                if (field.value) return field.value.trim();
+                continue;
+            }
+
+            if (field.type === "checkbox") {
+                if (field.checked) return field.value.trim();
+                continue;
+            }
+
+            if (field.value && field.value.trim()) {
+                return field.value.trim();
+            }
+        }
+
+        return "";
+    }
+
+    function getSelectedInterests() {
+        const selected = $$(
+            'input[type="checkbox"]:checked, input[type="radio"]:checked',
+            form
+        ).map(input => input.value.trim()).filter(Boolean);
+
+        const interestField = getFieldValue([
+            "interest",
+            "interests",
+            "service",
+            "topic"
+        ]);
+
+        if (interestField) selected.push(interestField);
+
+        const selectField = $(
+            'select[name="interest"], select[name="interests"], ' +
+            'select[name="service"], select[name="topic"]',
+            form
+        );
+
+        if (selectField && selectField.value) {
+            selected.push(selectField.options[selectField.selectedIndex].text);
+        }
+
+        return [...new Set(selected)].join(", ") || "General enquiry";
+    }
+
+    function buildEnquiry() {
+        const name = getFieldValue(["name", "fullName", "full_name"]);
+        const email = getFieldValue(["email", "userEmail"]);
+        const phone = getFieldValue(["phone", "telephone", "mobile"]);
+        const interests = getSelectedInterests();
+        const message = getFieldValue([
+            "message",
+            "details",
+            "project_details",
+            "description"
+        ]);
+
+        const lines = [
+            `Hello ${SITE_CONFIG.name},`,
+            "",
+            "I am contacting you through your website.",
+            "",
+            `Name: ${name || "Not provided"}`,
+            `Email: ${email || "Not provided"}`,
+            `Phone: ${phone || "Not provided"}`,
+            `Interest: ${interests}`,
+            "",
+            "My message:",
+            message || "I would like to receive more information.",
+            "",
+            "Please share the relevant details and next steps.",
+            "",
+            "Thank you."
+        ];
+
+        return {
+            subject: `Website enquiry from ${name || "a visitor"}`,
+            message: lines.join("\n")
+        };
+    }
+
+    function handleFormAction(destination) {
+        if (typeof form.reportValidity === "function" &&
+            !form.reportValidity()) {
+            return;
+        }
+
+        const enquiry = buildEnquiry();
+
+        if (destination === "whatsapp") {
+            openWhatsApp(enquiry.message);
+        } else {
+            openEmail(enquiry.subject, enquiry.message);
+        }
+    }
+
+    if (whatsappButton) {
+        whatsappButton.addEventListener("click", event => {
+            event.preventDefault();
+            handleFormAction("whatsapp");
+        });
+    }
+
+    if (emailButton) {
+        emailButton.addEventListener("click", event => {
+            event.preventDefault();
+            handleFormAction("email");
+        });
+    }
+
+    // If the form uses a normal submit button, default to WhatsApp.
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+
+        if (whatsappButton || emailButton) {
+            const submitter = event.submitter;
+
+            if (
+                submitter === emailButton ||
+                submitter?.dataset?.submit === "email" ||
+                submitter?.dataset?.contact === "email"
+            ) {
+                handleFormAction("email");
+            } else {
+                handleFormAction("whatsapp");
+            }
+        } else {
+            handleFormAction("whatsapp");
+        }
+    });
+}
+
+
+/* -------------------- EMAIL LINKS -------------------- */
+
+function initEmailLinks() {
+    $$('a[href^="mailto:"]').forEach(link => {
+        const currentHref = link.getAttribute("href") || "";
+        const queryIndex = currentHref.indexOf("?");
+        const query = queryIndex >= 0
+            ? currentHref.slice(queryIndex)
             : "";
 
-        link.href =
-            "mailto:" + CONTACT_EMAIL + emailOptions;
-    });
-}
-
-
-/* 6. AUTOMATIC COPYRIGHT YEAR */
-
-function updateCopyrightYear() {
-    const yearElement =
-        document.getElementById("currentYear");
-
-    if (yearElement) {
-        yearElement.textContent =
-            new Date().getFullYear();
-    }
-}
-
-
-/* 7. MOBILE NAVIGATION MENU */
-
-function setupMobileMenu() {
-    const menuToggle =
-        document.getElementById("menuToggle");
-
-    const navbar =
-        document.getElementById("mainNavbar");
-
-    if (!menuToggle || !navbar) return;
-
-    const menuIcon = menuToggle.querySelector("i");
-
-    function setMenuState(isOpen) {
-        navbar.classList.toggle("active", isOpen);
-
-        menuToggle.setAttribute(
-            "aria-expanded",
-            String(isOpen)
+        link.setAttribute(
+            "href",
+            `mailto:${SITE_CONFIG.email}${query}`
         );
-
-        menuToggle.setAttribute(
-            "aria-label",
-            isOpen
-                ? "Close navigation menu"
-                : "Open navigation menu"
-        );
-
-        if (menuIcon) {
-            menuIcon.classList.toggle(
-                "fa-bars",
-                !isOpen
-            );
-
-            menuIcon.classList.toggle(
-                "fa-xmark",
-                isOpen
-            );
-        }
-    }
-
-    menuToggle.addEventListener("click", function () {
-        const isOpen =
-            menuToggle.getAttribute("aria-expanded") === "true";
-
-        setMenuState(!isOpen);
     });
-
-    // Close the menu after a navigation link is selected.
-    navbar.querySelectorAll('a[href^="#"]').forEach(function (link) {
-        link.addEventListener("click", function () {
-            setMenuState(false);
-        });
-    });
-
-    // Close with Escape.
-    document.addEventListener("keydown", function (event) {
-        if (
-            event.key === "Escape" &&
-            menuToggle.getAttribute("aria-expanded") === "true"
-        ) {
-            setMenuState(false);
-            menuToggle.focus();
-        }
-    });
-
-    // Close when clicking outside the navigation.
-    document.addEventListener("click", function (event) {
-        const clickedInsideMenu =
-            navbar.contains(event.target) ||
-            menuToggle.contains(event.target);
-
-        if (!clickedInsideMenu) {
-            setMenuState(false);
-        }
-    });
-
-    // If the screen becomes desktop-sized, reset the mobile menu.
-    window.addEventListener("resize", function () {
-        if (window.innerWidth > 800) {
-            setMenuState(false);
-        }
-    });
-
-    // Start with the mobile menu closed.
-    setMenuState(false);
 }
 
 
-/* 8. SMOOTH NAVIGATION */
+/* -------------------- SMOOTH NAVIGATION -------------------- */
 
-function setupNavigation() {
-    const navigationLinks = document.querySelectorAll(
-        '.navbar a[href^="#"], .logo[href^="#"], ' +
-        '.nav-button[href^="#"], .footer-links a[href^="#"], ' +
-        '.back-to-top[href^="#"], .hero-actions a[href^="#"]'
-    );
-
+function initSmoothNavigation() {
     const reduceMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    navigationLinks.forEach(function (link) {
-        link.addEventListener("click", function (event) {
-            const targetId = link.getAttribute("href");
+    const navigationLinks = $$(
+        '.navbar a[href^="#"], ' +
+        '.logo[href^="#"], ' +
+        '.footer-links a[href^="#"], ' +
+        '.back-to-top[href^="#"]'
+    );
 
-            if (!targetId || targetId === "#") return;
+    navigationLinks.forEach(link => {
+        link.addEventListener("click", event => {
+            const href = link.getAttribute("href");
 
-            let targetSection;
+            if (!href || href === "#") return;
 
-            try {
-                targetSection = document.querySelector(targetId);
-            } catch (error) {
-                return;
-            }
+            const target = $(href);
 
-            if (!targetSection) return;
+            if (!target) return;
 
             event.preventDefault();
 
-            targetSection.scrollIntoView({
+            target.scrollIntoView({
                 behavior: reduceMotion ? "auto" : "smooth",
                 block: "start"
             });
 
-            // Update the URL hash without adding a new history entry.
-            if (window.location.hash !== targetId) {
-                history.replaceState(null, "", targetId);
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, "", href);
             }
         });
     });
 }
 
 
-/* 9. SCROLL REVEAL ANIMATIONS */
+/* -------------------- SCROLL REVEAL ANIMATIONS -------------------- */
 
-function setupScrollAnimations() {
-    const animatedElements = document.querySelectorAll(
-        ".about-card, .feature-card, .step-card, " +
-        ".contact-card, .information-panel, " +
-        ".join-cta, .contact-note"
+function initScrollReveal() {
+    const revealItems = $$(
+        ".about-card, " +
+        ".freelance-card, " +
+        ".feature-card, " +
+        ".step-card, " +
+        ".contact-card, " +
+        ".social-card, " +
+        ".gallery-item, " +
+        ".join-cta, " +
+        ".marketing-visual-card"
     );
+
+    if (!revealItems.length) return;
 
     const reduceMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
@@ -250,62 +419,97 @@ function setupScrollAnimations() {
         reduceMotion ||
         !("IntersectionObserver" in window)
     ) {
+        revealItems.forEach(item => {
+            item.classList.add("visible", "is-visible");
+        });
         return;
     }
 
+    revealItems.forEach(item => item.classList.add("reveal"));
+
     const observer = new IntersectionObserver(
-        function (entries, currentObserver) {
-            entries.forEach(function (entry) {
+        entries => {
+            entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add("visible");
-                    currentObserver.unobserve(entry.target);
+                    entry.target.classList.add("visible", "is-visible");
+                    observer.unobserve(entry.target);
                 }
             });
         },
         {
             threshold: 0.12,
-            rootMargin: "0px 0px -25px 0px"
+            rootMargin: "0px 0px -35px 0px"
         }
     );
 
-    animatedElements.forEach(function (element, index) {
-        element.classList.add("reveal");
-
-        // A small staggered delay creates a polished effect.
-        element.style.transitionDelay =
-            (index % 3) * 90 + "ms";
-
-        observer.observe(element);
-    });
+    revealItems.forEach(item => observer.observe(item));
 }
 
 
-/* 10. PREVENT EMPTY INTERNAL LINKS */
+/* -------------------- PHOTO GALLERY -------------------- */
 
-function setupSafeLinks() {
-    document.querySelectorAll('a[href="#"]').forEach(function (link) {
-        // WhatsApp buttons receive a URL in setupWhatsAppButtons().
-        if (link.id === "whatsappButton") return;
+function initPhotoGallery() {
+    const gallery = $(".photo-gallery");
 
-        link.addEventListener("click", function (event) {
-            event.preventDefault();
+    if (!gallery) return;
+
+    $$("img", gallery).forEach(image => {
+        image.loading = "lazy";
+        image.decoding = "async";
+
+        image.addEventListener("error", () => {
+            image.classList.add("image-unavailable");
+            console.warn("A gallery image could not be loaded:", image.src);
         });
     });
 }
 
 
-/* 11. INITIALIZE WEBSITE */
+/* -------------------- FOOTER YEAR -------------------- */
 
-document.addEventListener("DOMContentLoaded", function () {
-    setupWhatsAppButtons();
-    setupEmailLinks();
-    updateCopyrightYear();
-    setupMobileMenu();
-    setupNavigation();
-    setupScrollAnimations();
-    setupSafeLinks();
+function initFooterYear() {
+    const year = $("#currentYear");
 
-    console.log(
-        "Emmanuel Ouko's TSM Referral Hub is ready."
-    );
-});
+    if (year) {
+        year.textContent = new Date().getFullYear();
+    }
+}
+
+
+/* -------------------- EXTERNAL LINK SAFETY -------------------- */
+
+function initExternalLinks() {
+    $$('a[target="_blank"]').forEach(link => {
+        const rel = new Set(
+            (link.getAttribute("rel") || "").split(/\s+/).filter(Boolean)
+        );
+
+        rel.add("noopener");
+        rel.add("noreferrer");
+
+        link.setAttribute("rel", [...rel].join(" "));
+    });
+}
+
+
+/* -------------------- START WEBSITE -------------------- */
+
+function initWebsite() {
+    initMobileNavigation();
+    initWhatsAppButtons();
+    initInterestForm();
+    initEmailLinks();
+    initSmoothNavigation();
+    initScrollReveal();
+    initPhotoGallery();
+    initFooterYear();
+    initExternalLinks();
+
+    console.info(`${SITE_CONFIG.name} website is ready.`);
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initWebsite);
+} else {
+    initWebsite();
+}
