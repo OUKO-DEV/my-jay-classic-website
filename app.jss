@@ -1,192 +1,160 @@
 
-"use strict";
+(() => {
+  "use strict";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const $ = (selector, root = document) => root.querySelector(selector);
+  // Emmanuel Ouko website settings
+  const WHATSAPP_NUMBER = "254142617814";
 
-  // =====================================================
-  // EMMANUEL OUKO — SITE SETTINGS
-  // =====================================================
-  const SITE = {
-    name: "Emmanuel Ouko",
-    email: "emmanuelouko21@gmail.com",
-    // International digits only: Kenya country code + number.
-    // Confirm this number is correct before publishing.
-    whatsapp: "254142617814",
-    forexContact: "254707746452",
-    social: {
-      tiktok: "https://www.tiktok.com/@oukoemmanuel383",
-      instagram: "https://www.instagram.com/emmanueljayouko/",
-      youtube: "https://www.youtube.com/@OukoEmmanuel-o2f1x"
-    }
-  };
+  const $ = (selector, root = document) =>
+    root.querySelector(selector);
 
-  // =====================================================
+  const $$ = (selector, root = document) =>
+    [...root.querySelectorAll(selector)];
+
+  // Update the copyright year automatically
+  const year = $("#currentYear");
+
+  if (year) {
+    year.textContent = new Date().getFullYear();
+  }
+
   // MOBILE NAVIGATION
-  // =====================================================
   const menuToggle = $("#menuToggle");
   const mainNav = $("#mainNav");
 
-  function closeMenu() {
-    if (!menuToggle || !mainNav) return;
-    mainNav.classList.remove("open");
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.setAttribute("aria-label", "Open navigation");
-  }
-
   if (menuToggle && mainNav) {
     menuToggle.addEventListener("click", () => {
-      const willOpen = !mainNav.classList.contains("open");
-      mainNav.classList.toggle("open", willOpen);
-      menuToggle.setAttribute("aria-expanded", String(willOpen));
+      const isOpen = mainNav.classList.toggle("open");
+
+      menuToggle.setAttribute(
+        "aria-expanded",
+        String(isOpen)
+      );
+
       menuToggle.setAttribute(
         "aria-label",
-        willOpen ? "Close navigation" : "Open navigation"
+        isOpen ? "Close navigation" : "Open navigation"
       );
     });
 
-    mainNav.querySelectorAll('a[href^="#"]').forEach((link) => {
-      link.addEventListener("click", closeMenu);
+    // Close menu after choosing a navigation link
+    $$("#mainNav a").forEach((link) => {
+      link.addEventListener("click", () => {
+        mainNav.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Open navigation");
+      });
     });
 
+    // Close menu when clicking outside it
     document.addEventListener("click", (event) => {
       if (
-        mainNav.classList.contains("open") &&
         !mainNav.contains(event.target) &&
         !menuToggle.contains(event.target)
       ) {
-        closeMenu();
+        mainNav.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Open navigation");
       }
     });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeMenu();
-    });
-
-    window.addEventListener("resize", () => {
-      if (window.innerWidth > 760) closeMenu();
-    });
   }
 
-  // =====================================================
-  // CURRENT YEAR
-  // =====================================================
-  const currentYear = $("#currentYear");
-  if (currentYear) {
-    currentYear.textContent = String(new Date().getFullYear());
-  }
-
-  // =====================================================
-  // PREFILL SERVICE WHEN A SERVICE LINK IS CLICKED
-  // =====================================================
+  // AUTOMATIC SERVICE SELECTION
   const serviceSelect = $("#contactService");
 
-  document.querySelectorAll("[data-service]").forEach((link) => {
+  $$("[data-service]").forEach((link) => {
     link.addEventListener("click", () => {
-      const requestedService = link.getAttribute("data-service");
-      if (!serviceSelect || !requestedService) return;
+      if (!serviceSelect) return;
 
-      const matchingOption = Array.from(serviceSelect.options).find(
-        (option) =>
-          option.value === requestedService ||
-          option.textContent.trim() === requestedService
+      const requestedService = link.dataset.service;
+
+      const option = [...serviceSelect.options].find((item) =>
+        item.value === requestedService ||
+        item.textContent.trim() === requestedService
       );
 
-      if (matchingOption) {
-        serviceSelect.value = matchingOption.value;
+      if (option) {
+        serviceSelect.value = option.value;
       }
     });
   });
 
-  // =====================================================
-  // CONTACT FORM — PREPARE A WHATSAPP MESSAGE
-  // =====================================================
+  // CONTACT FORM
+  // This prepares a WhatsApp message; it does not send automatically.
   const contactForm = $("#contactForm");
   const formStatus = $("#formStatus");
-
-  function setFormStatus(message) {
-    if (formStatus) formStatus.textContent = message;
-  }
-
-  function normalizePhone(value) {
-    return String(value || "").replace(/\D/g, "");
-  }
-
-  function validKenyanWhatsApp(number) {
-    // Accept international format beginning 254 with 9 digits after it.
-    return /^254\d{9}$/.test(number);
-  }
 
   if (contactForm) {
     contactForm.addEventListener("submit", (event) => {
       event.preventDefault();
 
-      if (!contactForm.reportValidity()) return;
+      const name = $("#contactName")?.value.trim() || "";
+      const email = $("#contactEmail")?.value.trim() || "";
+      const phone = $("#contactPhone")?.value.trim() || "";
+      const service = $("#contactService")?.value.trim() || "";
+      const budget = $("#contactBudget")?.value.trim() || "";
+      const message = $("#contactMessage")?.value.trim() || "";
 
-      const formData = new FormData(contactForm);
-      const name = String(formData.get("name") || "").trim();
-      const email = String(formData.get("email") || "").trim();
-      const phone = String(formData.get("phone") || "").trim();
-      const service = String(formData.get("service") || "").trim();
-      const budget = String(formData.get("budget") || "").trim();
-      const message = String(formData.get("message") || "").trim();
-
+      // Basic required-field validation
       if (!name || !email || !service || !message) {
-        setFormStatus("Please complete all required fields.");
+        if (formStatus) {
+          formStatus.textContent =
+            "Please complete your name, email, service and message.";
+        }
         return;
       }
 
-      const subject = `Website enquiry: ${service}`;
-      const body = [
-        `Hello ${SITE.name},`,
-        "",
-        "I would like to make an enquiry.",
+      // Validate email format
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailPattern.test(email)) {
+        if (formStatus) {
+          formStatus.textContent =
+            "Please enter a valid email address.";
+        }
+        return;
+      }
+
+      const whatsappMessage = [
+        "Hello Emmanuel, I am enquiring through your website.",
         "",
         `Name: ${name}`,
+        phone ? `Phone: ${phone}` : "",
         `Email: ${email}`,
-        `Phone: ${phone || "Not provided"}`,
         `Service: ${service}`,
-        `Budget: ${budget || "Not specified"}`,
+        budget ? `Estimated budget: ${budget}` : "",
         "",
-        "Project details:",
+        "Project / enquiry details:",
         message
-      ].join("\n");
+      ]
+        .filter(Boolean)
+        .join("\n");
 
-      const whatsappNumber = normalizePhone(SITE.whatsapp);
+      const whatsappURL =
+        `https://wa.me/${WHATSAPP_NUMBER}?text=` +
+        encodeURIComponent(whatsappMessage);
 
-      if (validKenyanWhatsApp(whatsappNumber)) {
-        const whatsappURL =
-          `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(body)}`;
-
-        setFormStatus(
-          "Your WhatsApp message is prepared. Review it and press Send in WhatsApp."
-        );
-
-        const newWindow = window.open(whatsappURL, "_blank", "noopener,noreferrer");
-
-        if (!newWindow) {
-          window.location.href = whatsappURL;
-        }
-
-        return;
+      if (formStatus) {
+        formStatus.textContent =
+          "WhatsApp is opening with your message. Review it and press Send.";
       }
 
-      // Fallback: open the visitor's email app.
-      const mailURL =
-        `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}` +
-        `&body=${encodeURIComponent(body)}`;
-
-      setFormStatus(
-        "WhatsApp number is not configured correctly. Opening your email app instead."
+      // Open WhatsApp for the visitor to review and send
+      const newWindow = window.open(
+        whatsappURL,
+        "_blank",
+        "noopener,noreferrer"
       );
-      window.location.href = mailURL;
+
+      // Fallback if the browser blocks the new window
+      if (!newWindow) {
+        window.location.href = whatsappURL;
+      }
     });
   }
 
-  // =====================================================
-  // BASIC WEBSITE ASSISTANT
-  // This is a local FAQ helper, not a live AI model.
-  // =====================================================
+  // WEBSITE ASSISTANT
+  // This is a local FAQ helper, not a live AI service.
   const assistantLauncher = $("#assistantLauncher");
   const assistantPanel = $("#assistantPanel");
   const assistantClose = $("#assistantClose");
@@ -195,110 +163,126 @@ document.addEventListener("DOMContentLoaded", () => {
   const assistantMessages = $("#assistantMessages");
 
   function openAssistant() {
-    if (!assistantPanel || !assistantLauncher) return;
-    assistantPanel.hidden = false;
-    assistantLauncher.setAttribute("aria-expanded", "true");
-
-    if (assistantInput) {
-      window.setTimeout(() => assistantInput.focus(), 50);
+    if (assistantPanel) {
+      assistantPanel.hidden = false;
     }
+
+    assistantInput?.focus();
   }
 
   function closeAssistant() {
-    if (!assistantPanel || !assistantLauncher) return;
-    assistantPanel.hidden = true;
-    assistantLauncher.setAttribute("aria-expanded", "false");
-    assistantLauncher.focus();
+    if (assistantPanel) {
+      assistantPanel.hidden = true;
+    }
   }
 
-  function addAssistantMessage(message, type) {
+  assistantLauncher?.addEventListener("click", () => {
+    if (!assistantPanel) return;
+
+    if (assistantPanel.hidden) {
+      openAssistant();
+    } else {
+      closeAssistant();
+    }
+  });
+
+  assistantClose?.addEventListener("click", closeAssistant);
+
+  // Add a chat message safely using textContent
+  function addBubble(message, sender = "assistant") {
     if (!assistantMessages) return;
 
-    const item = document.createElement("div");
-    item.className =
-      "assistant-message " +
-      (type === "user" ? "user-message" : "bot-message");
+    const bubble = document.createElement("div");
 
-    // Use textContent rather than HTML so typed messages aren't interpreted as markup.
-    item.textContent = message;
-    assistantMessages.appendChild(item);
-    assistantMessages.scrollTop = assistantMessages.scrollHeight;
+    bubble.className =
+      sender === "user" ? "bubble user" : "bubble";
+
+    bubble.textContent = message;
+
+    assistantMessages.appendChild(bubble);
+    assistantMessages.scrollTop =
+      assistantMessages.scrollHeight;
   }
 
-  function getAssistantReply(question) {
+  // Answer common visitor questions
+  function getAssistantAnswer(question) {
     const q = question.toLowerCase();
 
-    if (/hello|hi\b|hey\b|habari|good morning|good afternoon/.test(q)) {
-      return `Hello! Welcome to ${SITE.name}'s website. Ask me about services, courses, Forex education or contact details.`;
+    if (/price|cost|budget|charge|quote/.test(q)) {
+      return (
+        "Pricing depends on the scope of your project. " +
+        "Use the enquiry form to share your requirements and budget. " +
+        "Emmanuel can confirm the deliverables and price before work begins."
+      );
     }
 
-    if (/website|web design|developer|html|css/.test(q)) {
-      return "Website services include responsive landing pages, portfolio sites, business websites and website improvements. Use the contact form to describe your project.";
+    if (/forex|trading|trade|market|signal|profit/.test(q)) {
+      return (
+        "The Forex section is for education. You can learn about " +
+        "market basics, demo trading and risk management. Demo trading " +
+        "uses simulated funds; real trading involves actual financial risk. " +
+        "Profits are not guaranteed, and this website does not place trades."
+      );
     }
 
-    if (/graphic|design|poster|logo|canva/.test(q)) {
-      return "You can enquire about graphic design, promotional visuals, social media content and Canva learning. Open the Services section or send a project enquiry.";
+    if (/mpesa|m-pesa|pay|payment|stk|pin|otp/.test(q)) {
+      return (
+        "Please contact Emmanuel first to confirm the amount and payment " +
+        "instructions. This website does not initiate an M-Pesa STK Push. " +
+        "Never share your M-Pesa PIN or one-time password."
+      );
     }
 
-    if (/marketing|social media|branding|brand/.test(q)) {
-      return "You can enquire about digital marketing, content planning, online presence and personal branding. The exact scope and price should be agreed before work begins.";
+    if (/website|web design|developer|landing page/.test(q)) {
+      return (
+        "Emmanuel offers website and landing-page support. " +
+        "Use the enquiry form to explain your idea, preferred features " +
+        "and expected budget."
+      );
     }
 
-    if (/ai|artificial intelligence|prompt|productivity/.test(q)) {
-      return "The AI learning topics cover beginner-friendly tools, prompts, writing assistance, research and productivity workflows. Do not share passwords or private information with AI tools.";
+    if (/graphic|design|brand|logo|poster/.test(q)) {
+      return (
+        "You can enquire about branding, logos, social media graphics " +
+        "and promotional designs. Share the purpose and style you have in mind."
+      );
     }
 
-    if (/forex|trading|currency|market|demo|real trading/.test(q)) {
-      return "The Forex section is for education only. Demo trading uses simulated funds; live trading uses real money and can cause losses. This website does not execute trades or provide guaranteed signals.";
+    if (/ai|artificial intelligence|tool|automation/.test(q)) {
+      return (
+        "AI support focuses on practical tools, prompting and productivity. " +
+        "Contact Emmanuel to discuss the guidance or training you need."
+      );
     }
 
-    if (/dan|reference/.test(q)) {
-      return "Dan is listed as a Forex learning reference. You can reach him using the WhatsApp link in the Forex education section. Verify the contact details before sharing personal information.";
+    if (/course|class|learn|training|lesson/.test(q)) {
+      return (
+        "Learning topics include digital tools, AI productivity and Forex " +
+        "market foundations. Contact Emmanuel to confirm current sessions."
+      );
     }
 
-    if (/course|class|learn|training|enrol/.test(q)) {
-      return "Learning topics include Canva and content creation, beginner AI tools, website fundamentals and Forex basics. Contact Emmanuel to confirm current schedules, availability and fees.";
+    if (/contact|whatsapp|phone|email|reach/.test(q)) {
+      return (
+        "Contact Emmanuel on WhatsApp at +254 142 617 814 or email " +
+        "emmanuelouko21@gmail.com. The contact form prepares a WhatsApp " +
+        "message for you to review and send."
+      );
     }
 
-    if (/price|pricing|cost|budget|charge|fee/.test(q)) {
-      return "Pricing depends on the service and project scope. Submit an enquiry with your needs and budget, then confirm the final quote before work starts.";
+    if (/hello|hi|hey|habari/.test(q)) {
+      return (
+        "Hello! Welcome to Emmanuel Ouko's website. " +
+        "Ask me about digital services, learning, pricing, payments " +
+        "or Forex education."
+      );
     }
 
-    if (/mpesa|m-pesa|payment|pay\b|stk/.test(q)) {
-      return "Contact Emmanuel to agree on the service and payment details. Automated M-Pesa STK Push is not enabled on this front-end website. Never enter your M-Pesa PIN into this website.";
-    }
-
-    if (/book|booking|calendar|appointment/.test(q)) {
-      return "Please use the contact form to discuss an appointment. A live calendar with automatic booking confirmation has not yet been connected.";
-    }
-
-    if (/client portal|login|account|dashboard/.test(q)) {
-      return "A secure client portal and admin dashboard require a backend, authentication and a database. This public website does not currently provide secure account login.";
-    }
-
-    if (/email|contact|whatsapp|phone|reach/.test(q)) {
-      return `You can email ${SITE.email}, or use the WhatsApp and contact links in the Contact section. The contact form prepares a message for you to review and send.`;
-    }
-
-    if (/tiktok|instagram|youtube|facebook|follow|social/.test(q)) {
-      return "Use the Connect Online section for TikTok, Instagram, YouTube and Facebook links.";
-    }
-
-    return "I can help with website services, graphic design, digital marketing, AI tools, learning topics, Forex education and contact details. Try asking about one of those topics or use the contact form.";
-  }
-
-  if (assistantLauncher) {
-    assistantLauncher.addEventListener("click", () => {
-      if (assistantPanel && !assistantPanel.hidden) {
-        closeAssistant();
-      } else {
-        openAssistant();
-      }
-    });
-  }
-
-  if (assistantClose) {
-    assistantClose.addEventListener("click", closeAssistant);
+    return (
+      "I can help with website services, design, pricing, AI tools, " +
+      "learning, M-Pesa instructions or Forex education. " +
+      "You can also contact Emmanuel on WhatsApp at +254 142 617 814."
+    );
   }
 
   if (assistantForm && assistantInput) {
@@ -306,85 +290,61 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
 
       const question = assistantInput.value.trim();
+
       if (!question) return;
 
-      addAssistantMessage(question, "user");
+      addBubble(question, "user");
+
       assistantInput.value = "";
 
-      // Local FAQ response; no external API call is made.
-      addAssistantMessage(getAssistantReply(question), "bot");
+      const response = getAssistantAnswer(question);
+
+      addBubble(response, "assistant");
       assistantInput.focus();
     });
   }
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && assistantPanel && !assistantPanel.hidden) {
-      closeAssistant();
-    }
-  });
-
-  // =====================================================
   // BACK-TO-TOP BUTTON
-  // =====================================================
   const backToTop = $("#backToTop");
 
   function updateBackToTop() {
     if (!backToTop) return;
-    backToTop.classList.toggle("visible", window.scrollY > 500);
+
+    backToTop.classList.toggle(
+      "visible",
+      window.scrollY > 500
+    );
   }
 
-  if (backToTop) {
-    window.addEventListener("scroll", updateBackToTop, { passive: true });
-    updateBackToTop();
+  window.addEventListener(
+    "scroll",
+    updateBackToTop,
+    { passive: true }
+  );
 
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({
-        top: 0,
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth"
-      });
+  updateBackToTop();
+
+  backToTop?.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
     });
-  }
+  });
 
-  // =====================================================
-  // SAFETY: OPEN EXTERNAL LINKS IN A NEW TAB SAFELY
-  // Existing target="_blank" links should include noopener.
-  // =====================================================
-  document.querySelectorAll('a[target="_blank"]').forEach((link) => {
+  // ADD SECURITY ATTRIBUTES TO EXTERNAL NEW-TAB LINKS
+  $$('a[target="_blank"]').forEach((link) => {
     const relValues = new Set(
-      (link.getAttribute("rel") || "").split(/\s+/).filter(Boolean)
+      (link.rel || "")
+        .split(/\s+/)
+        .filter(Boolean)
     );
 
     relValues.add("noopener");
     relValues.add("noreferrer");
-    link.setAttribute("rel", Array.from(relValues).join(" "));
+
+    link.rel = [...relValues].join(" ");
   });
 
-  // =====================================================
-  // SMOOTH INTERNAL NAVIGATION
-  // =====================================================
-  document.querySelectorAll('a[href^="#"]').forEach((link) => {
-    link.addEventListener("click", (event) => {
-      const targetID = link.getAttribute("href");
-      if (!targetID || targetID === "#") return;
-
-      const target = document.getElementById(targetID.slice(1));
-      if (!target) return;
-
-      event.preventDefault();
-      target.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "auto"
-          : "smooth",
-        block: "start"
-      });
-
-      if (history.replaceState) {
-        history.replaceState(null, "", targetID);
-      }
-    });
-  });
-
-  console.info(`${SITE.name} website scripts loaded.`);
-});
+})();
